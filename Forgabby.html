@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Destiny ✨</title>
+    <style>
+        body {
+            background-color: #fff5f7;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #ff4d6d;
+            overflow: hidden; /* Keeps hearts within bounds */
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15);
+            text-align: center;
+            width: 360px;
+            border: 1px solid #ffccd5;
+            z-index: 10;
+            position: relative;
+        }
+        .hidden { display: none; }
+        input {
+            width: 85%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 20px;
+            border: 1px solid #ffccd5;
+            outline: none;
+            text-align: center;
+        }
+        button {
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover { background: #ff758f; transform: translateY(-2px); }
+        nav { margin-bottom: 25px; display: flex; justify-content: space-evenly; }
+        nav button { background: none; color: #ff4d6d; border: 1px solid #ffccd5; padding: 6px 15px; font-size: 13px; }
+        
+        /* 3-Photo Gallery Layout */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .photo-main {
+            grid-column: span 2;
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+        .photo-sub {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        #typewriter {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #4a4a4a;
+            text-align: left;
+            min-height: 160px;
+            padding: 10px;
+        }
+
+        /* Floating Hearts Animation */
+        .heart-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .floating-heart {
+            position: absolute;
+            color: #ffb3c1;
+            font-size: 20px;
+            animation: float 6s linear infinite;
+            opacity: 0;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Game Area */
+        #game-area {
+            height: 200px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            background: #fff0f3;
+            border: 2px dashed #ffb3c1;
+        }
+        #target { position: absolute; font-size: 30px; cursor: pointer; user-select: none; }
+    </style>
+</head>
+<body>
+
+    <div class="heart-bg" id="heart-bg"></div>
+
+    <div id="login-screen" class="container">
+        <h1>Hey, Babe ✨</h1>
+        <p>I made something for you.</p>
+        <input type="password" id="passInput" placeholder="Enter our secret code">
+        <br>
+        <button onclick="checkPass()">Unlock</button>
+        <p id="error" style="color: #ff4d6d; font-size: 12px;"></p>
+    </div>
+
+    <div id="main-content" class="container hidden">
+        <nav>
+            <button onclick="show('letter')">Note</button>
+            <button onclick="show('gallery')">Gallery</button>
+            <button onclick="show('game')">Play</button>
+        </nav>
+
+        <div id="letter" class="content-section">
+            <h2 style="margin-top:0;">For Destiny</h2>
+            <div id="typewriter"></div>
+        </div>
+
+        <div id="gallery" class="content-section hidden">
+            <h3>My Girl is So Pretty🙂‍↕</h3>
+            <div class="photo-grid">
+                <img src="Val1.jpg" class="photo-main" alt="Destiny 1">
+                <img src="Val2.jpg" class="photo-sub" alt="Destiny 2">
+                <img src="Val3.jpg" class="photo-sub" alt="Destiny 3">
+            </div>
+        </div>
+
+        <div id="game" class="content-section hidden">
+            <h3>Catch My Heart!</h3>
+            <p style="font-size: 13px;">Score: <span id="score">0</span>/5</p>
+            <div id="game-area">
+                <div id="target" onclick="hit()">❤️</div>
+            </div>
+            <p id="win-msg" style="font-weight: bold; margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <script>
+        const message = "I just wanted to make a little space that belongs only to us. Talking to you is the highlight of every single day. You're so incredibly special to me, and I hope this makes you feel even half as amazing as you make me feel. I'm so lucky to have you, Destiny.";
+        
+        let charIndex = 0;
+        let gameScore = 0;
+
+        // Background Hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.getElementById('heart-bg').appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 6000);
+        }
+        setInterval(createHeart, 400);
+
+        function checkPass() {
+            const val = document.getElementById('passInput').value.toLowerCase();
+            if (val === '0327' || val === '0327') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                typeOut();
+            } else {
+                document.getElementById('error').innerText = "Try 'i love you' ❤️";
+            }
+        }
+
+        function typeOut() {
+            if (charIndex < message.length) {
+                document.getElementById("typewriter").innerHTML += message.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeOut, 50);
+            }
+        }
+
+        function show(id) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            if(id === 'game') moveTarget();
+        }
+
+        function moveTarget() {
+            const t = document.getElementById('target');
+            const area = document.getElementById('game-area');
+            t.style.left = Math.random() * (area.clientWidth - 40) + 'px';
+            t.style.top = Math.random() * (area.clientHeight - 40) + 'px';
+        }
+
+        function hit() {
+            gameScore++;
+            document.getElementById('score').innerText = gameScore;
+            if (gameScore < 5) {
+                moveTarget();
+            } else {
+                document.getElementById('target').style.display = 'none';
+                document.getElementById('win-msg').innerText = "You caught it! Just like you caught my heart 😉, it's all yours. 🥰";
+            }
+        }
+    </script>
+</body>
+</html>
